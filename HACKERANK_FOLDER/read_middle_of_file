@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# set the input file name and line numbers
+input_file="input.txt"
+start_line=12
+num_lines=11   # we want to display 11 lines starting from line 12, so num_lines = 11
+
+# use head to extract the desired lines and print them to the console
+head -n $((start_line + num_lines - 1)) "$input_file" | tail -n $num_lines
