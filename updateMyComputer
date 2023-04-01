@@ -1,0 +1,70 @@
+#!/bin/bash
+
+flashred="\033[5;31;40m"
+red="\033[31;40m"
+none="\033[0m"
+green="\033[32m"
+aqua="\033[36m"
+#---------------------------------------------------------functions---------------------------------------------------
+header_update(){
+	echo -e "\n ============================================================================================\n"
+	echo -e $green"\t\t\t\t\t UPDATE STARTING"$none 
+	echo -e "\n ============================================================================================\n"
+}
+
+ footer_update(){
+           echo -e "\n ============================================================================================\n"
+           echo -e $green"\t\t\t\t\t ALL UP-TO-DATE"$none
+           echo -e "\n ============================================================================================\n"
+  }
+
+help_function(){
+          echo -e $green"\t\t\t\t\t INFORMATION BANNER "$none
+          echo -e "\n ============================================================================================\n\n"
+	  echo -e "\t*******************************************************************************\t\n"
+	  echo -e $flashred"\t\tTo execute this command you need to have a higher privilegies\t\n"$none
+	  echo -e "\t*******************************************************************************\t\n"
+	  echo -e "\n ============================================================================================\n\n"
+}
+
+clean_up_function(){
+brew cleanup
+}
+
+update_function(){
+brew upgrade
+brew update 
+updatedb
+}
+#----------------------------------Seting up environment ---------------------
+if [ "$1" = "--help"  ];then
+  help_function
+else
+ #this par is for creating log from each updating using date commande
+
+ today=$(date +"%Y-%m-%d")
+ log_file_name=${today}.log
+ log_folder_path="/var/log/my_update_logs"
+
+ #this portion of code will check the existance of the file otherwise create a new one and also make it writable
+ if [ ! -e "$log_folder_path/$log_file_name" ];then
+   help_function
+   echo -e $green"Please enter your password"$none
+   sudo touch "${log_folder_path}/${log_file_name}" 
+   if [ ! -w "${log_folder_path}/${log_file_name}" ];then
+     echo -e $green"File has been created but not writable enter your password in the way to make it writable"$none
+     sudo chmod 777 "${log_folder_path}/${log_file_name}"
+   fi
+ fi
+ #-----------------------------------------Setting up the logic ------------------
+  echo -e $aqua"-----------------------------------------\t"$(date +"%h a :%H-%M")"\t------------------------------------------------"$none >> "${log_folder_path}/${log_file_name}" 2>&1 &
+ ########################
+   header_update >> "${log_folder_path}/${log_file_name}" 2>&1 &
+ ########################
+
+  update_function >> "${log_folder_path}/${log_file_name}" 2>&1 &
+  clean_up_function >> "${log_folder_path}/${log_file_name}"  2>&1 &
+  ########################
+  # footer_update >> "${log_folder_path}/${log_file_name}" 2>&1 &
+  ########################
+fi

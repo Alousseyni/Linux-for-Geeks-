@@ -1,0 +1,6 @@
+#!/bin/bash
+
+link=https://cheat.sh
+cmd_name=$1
+
+curl "$link/$cmd_name"
